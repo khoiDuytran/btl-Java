@@ -6,9 +6,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 
-public class Rocket {
+public class Rocket extends HpRender {
 
     public Rocket() {
+        super(new HP(20, 20));
         this.image = new ImageIcon(getClass().getResource("/game/image/rocket.png")).getImage();
         Path2D p =new Path2D.Double();
         p.moveTo(0,ROCKET_SITE / 2);
@@ -22,7 +23,7 @@ public class Rocket {
     public static final double ROCKET_SITE = 50;
     private double x;
     private double y;
-    private final float speed = 0.3f;
+    private final float speed = 0.8f;
     private float angle = 0;
     private final Image image;
     private final Area rocketShap;
@@ -56,11 +57,12 @@ public class Rocket {
         tran.rotate(Math.toRadians(angle + 45), ROCKET_SITE / 2, ROCKET_SITE / 2);
         g2.drawImage(image, tran, null);
         Shape shap = getShape();
+        hpRender(g2, shap, y);
         g2.setTransform(oldTransform);
 
-        g2.setColor(new Color(36, 214, 63));
-        g2.draw(shap);
-        g2.draw(shap.getBounds2D());
+//        g2.setColor(new Color(36, 214, 63));
+//        g2.draw(shap);
+//        g2.draw(shap.getBounds2D());
     }
 
     public double getX() {

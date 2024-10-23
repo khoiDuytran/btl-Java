@@ -6,6 +6,15 @@ public class Key {
     private boolean key_space;
     private boolean key_j;
     private boolean key_k;
+    private boolean key_enter;
+
+    public boolean isKey_enter() {
+        return key_enter;
+    }
+
+    public void setKey_enter(boolean key_enter) {
+        this.key_enter = key_enter;
+    }
 
     public boolean isKey_right() {
         return key_right;

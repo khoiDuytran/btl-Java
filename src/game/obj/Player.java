@@ -3,12 +3,22 @@ package game.obj;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 
-public class Player {
+public class Player extends HpRender {
 
     public Player() {
+        super(new HP(50, 50));
         this.image = new ImageIcon(getClass().getResource("/game/image/plane.png")).getImage();
         this.image_speed = new ImageIcon(getClass().getResource("/game/image/plane_speed.png")).getImage();
+        Path2D p = new Path2D.Double();
+        p.moveTo(0, 15);
+        p.lineTo(20, 5);
+        p.lineTo(PLAYER_SITE + 15, PLAYER_SITE / 2);
+        p.lineTo(20, PLAYER_SITE - 5);
+        p.lineTo(0, PLAYER_SITE - 15);
+        playerShap = new Area(p);
     }
 
     public static final double PLAYER_SITE = 64;
@@ -17,9 +27,11 @@ public class Player {
     private final float MAX_SPEED = 1f;
     private float speed = 0f;
     private float angle = 0f;
+    private final Area playerShap;
     private final Image image;
     private final Image image_speed;
     private boolean speedUp;
+    private boolean alive = true;
 
     public void changeLocation(double x, double y) {
         this.x =x;
@@ -49,8 +61,18 @@ public class Player {
         AffineTransform tran = new AffineTransform();
         tran.rotate(Math.toRadians(angle + 45), PLAYER_SITE / 2, PLAYER_SITE / 2);
         g2.drawImage(speedUp ? image_speed : image, tran, null);
-
+        hpRender(g2, getShape(), y);
         g2.setTransform(oldTransform);
+
+//        g2.setColor(new Color(12,173, 84));
+//        g2.draw(getShape());
+//        g2.draw(getShape().getBounds());
+    }
+    public Area getShape() {
+        AffineTransform afx = new AffineTransform();
+        afx.translate(x, y);
+        afx.rotate(Math.toRadians(angle), PLAYER_SITE / 2, PLAYER_SITE / 2);
+        return new Area(afx.createTransformedShape(playerShap));
     }
 
     public double getX() {
@@ -83,5 +105,18 @@ public class Player {
         else {
             speed -= 0.003f;
         }
+    }
+    public boolean isAlive() {
+        return alive;
+    }
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public void reset() {
+        alive = true;
+        resetHP();
+        angle = 0;
+        speed = 0;
     }
 }
