@@ -24,7 +24,6 @@ public class ModelBoom {
     }
 
     public ModelBoom() {
-
     }
     private double size;
     private float angle;
