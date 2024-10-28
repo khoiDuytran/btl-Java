@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +27,12 @@ public class PanelGame extends JComponent {
     private boolean start = true;
     private Key key; // khai báo đối tượng key xử lý các phím
     private int shotTime;  // thời gian giữa những lần bắn của player
+    private boolean bossActive = false; // kiểm tra sự xuất hiện của boss
+    private long bossShotTime = 0;  // thời gian lần cuối boss bắn đạn
+
+    double playTime;
+    DecimalFormat dFormat =new DecimalFormat("#0.00");
+
 
     // FPS
     private final int FPS = 60;
@@ -38,6 +45,8 @@ public class PanelGame extends JComponent {
     private List<Bullet> bullets;  // danh sách các đối tượng ĐẠN
     private List<Rocket> rockets;  // danh sách các Tên Lửa
     private List<Effect> boomEffects;  // danh sách các hiệu ứng nổ
+    private List<BossBullet> bossBullets;   // danh sách đạn từ boss
+    private Boss boss;  // trùm cuối
 
     private int score = 0;  // điểm ban đầu của người chơi
 
@@ -64,6 +73,8 @@ public class PanelGame extends JComponent {
                     drawBackground();   // vẽ nền game
                     drawGame(); // vẽ các đối tượng game
                     render();  // Cập nhật màn hình bằng cách vẽ nội dung hình ảnh (image) lên screen
+                    bossUpdate();
+                    //if(player.isAlive()) playTime +=(double) 1/60;
 
                     long time = System.nanoTime() - startTime;
                     // thời gian đã trôi qua của vòng lặp hiện tại
@@ -78,6 +89,7 @@ public class PanelGame extends JComponent {
         initObjectGame();  // Khởi tạo các đối tượng trong trò chơi
         initKeyboard();    // Khởi tạo xử lý các phản hồi từ phím bấm từ người chơi
         initBullets();     //  Khởi tạo danh sách các viên đạn để người chơi có thể bắn trong trò chơi
+        initBossBullet();   // Khởi tạo danh sách các viên đạn để boss bắn vào player
         thread.start();    //  Bắt đầu luồng trò chơi để thực hiện vòng lặp liên tục
     }
 
@@ -105,6 +117,28 @@ public class PanelGame extends JComponent {
         // Đặt góc di chuyển của rocket2 là 180 độ, nó sẽ di chuyển từ phải sang trái
         rockets.add(rocket2);
         // thêm rocket thứ 2 vào danh sách
+
+        int locationY3 = ran.nextInt(height - 50) + 10;
+        // vị trí y ngẫu nhiên của tên lửa thứ hai
+        Rocket rocket3 = new Rocket();
+        rocket3.changeLocation(width, locationY3);
+        // Đặt vị trí ban đầu của rocket3 tại tọa độ (width, locationY3), ở cạnh phải của màn hình
+        rocket3.changeAngle(180);
+        // Đặt góc di chuyển của rocket3 là 180 độ, nó sẽ di chuyển từ phải sang trái
+        rockets.add(rocket3);
+        // nếu boss xuất hiện, thêm rocket thứ 3 vào danh sách
+
+        int locationY4 = ran.nextInt(height - 50) + 5;
+        // vị trí y ngẫu nhiên của tên lửa thứ 4
+        Rocket rocket4 = new Rocket();
+        rocket4.changeLocation(width, locationY4);
+        // Đặt vị trí ban đầu của rocket4 tại tọa độ (width, locationY4), ở cạnh trái của màn hình
+        rocket3.changeAngle(0);
+        // Đặt góc di chuyển của rocket4 là 0 độ, nó sẽ di chuyển từ trái sang phải
+
+        if(bossActive){
+            rockets.add(rocket4);
+        }   // nếu boss xuất hiện, thêm rocket thứ 4 vào danh sách
     }
 
 
@@ -135,6 +169,7 @@ public class PanelGame extends JComponent {
         bullets.clear();
         player.changeLocation(150, 150);
         player.reset();
+        bossActive = false;
     }
 
     private void initKeyboard() {
@@ -217,7 +252,7 @@ public class PanelGame extends JComponent {
                                     // thêm đạn với kích cỡ là 5
                                 }
                                 else {
-                                    bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 20, 3f));
+                                    bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 15, 3f));
                                     // thêm đạn với kích cỡ là 20
                                 }
                                 sound.soundShoot(); // thêm âm thanh bắn đạn
@@ -241,6 +276,18 @@ public class PanelGame extends JComponent {
                             // ngược lại, player giảm dần tốc độ
                         }
                         player.update();
+                        if (player.getX() < 0) {
+                            player.changeLocation(width, getY());
+                        } else if (player.getX() > width) {
+                            player.changeLocation(0, getY());
+                        }
+
+                        // Kiểm tra chiều dọc
+                        if (player.getY() < 0) {
+                            player.changeLocation(getX(), height);
+                        } else if (player.getY() > height) {
+                            player.changeLocation(getX(), 0);
+                        }
                         // cập nhật vị trí của player theo hướng mới
                         player.changeAngle(angle);
                         // cập nhật góc xoay của player
@@ -267,6 +314,9 @@ public class PanelGame extends JComponent {
                                 }
                             }
                         }
+                    }
+                    if (bossActive && player.isAlive()) {
+                        checkBoss(player);
                     }
                     sleep(5);
                     // Dừng luồng 5ms trước khi lặp lại vòng while để duy trì tốc độ xử lý mượt mà
@@ -319,6 +369,132 @@ public class PanelGame extends JComponent {
             }
         }).start();
     }
+    private void initBossBullet() {
+        bossBullets = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(start) {
+                    for(int i = 0; i < bossBullets.size(); i++) {
+                        // duyệt qua danh sách bossbullets và lấy đạn tại chỉ số 'i'
+                        BossBullet bossbullet = bossBullets.get(i);
+                        if (bossbullet != null) {
+                           bossbullet.update();
+                            // cập nhật vị trí đạn (di chuyển theo hướng nhất định)
+                            checkBossBullet(bossbullet);
+                            // kiểm tra va chạm
+                            if (!bossbullet.check(width, height)) {
+                                bullets.remove(bossbullet);
+                                // nếu đạn bay ra khỏi screen, xoá nó khỏi danh sách
+                            }
+                        } else {
+                            bossBullets.remove(bossbullet);
+                            // nếu đạn là null, loại khỏi danh sách
+                        }
+                    }
+                    for (int i = 0; i < boomEffects.size(); i++){
+                        // duyệt qua danh sách hiệu ứng
+                        Effect boomEffect = boomEffects.get(i);
+                        if(boomEffect != null) {
+                            boomEffect.update();
+                            // cập nhật trang thái nổ
+                            if(!boomEffect.check()) {
+                                boomEffects.remove(boomEffect);
+                            }
+                            // kiểm tra xem hiệu ứng nổ còn hoạt động hay không. Nếu không, loại bỏ hiệu ứng nổ khỏi danh sách boomEffects
+                        } else {
+                            boomEffects.remove(boomEffect);
+                            // Nếu hiệu ứng nổ là null, loại bỏ nó khỏi danh sách
+                        }
+                    }
+                    sleep(1);
+                    // Dừng luồng 1ms trước khi lặp lại vòng while để giảm tải cho CPU và duy trì tốc độ xử lý mượt mà
+                }
+            }
+        }).start();
+    }
+
+    private void bossUpdate() {
+        if (score == 2 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
+            boss = new Boss();
+            boss.changeLocation(getWidth() - Boss.BOSS_SITE, getHeight() / 2);  // Xuất hiện tại bên phải screen
+            boss.changeAngle(180);    // thay đổi góc của boss
+            bossActive = true;  // Boss xuất hiện
+            boss.update();
+        }
+
+        if (bossActive && player.isAlive()) {
+            if (bossShotTime == 0) {
+                // Bắn đạn theo góc mà boss đang nhìn
+
+                bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() , 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 15, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 15, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 70, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 70, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 50, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 50, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 30, 15, 3f));
+                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 30, 15, 3f));
+                // thêm các hướng bắn đạn của boss
+
+                sound.soundShoot();  // Chèn âm thanh bắn
+            }
+
+            bossShotTime++;
+            if (bossShotTime >= 30) {  // Đặt tần suất bắn
+                bossShotTime = 0;
+            }
+            checkBoss(player);  // Kiểm tra va chạm với người chơi
+        }
+    }
+
+    private void checkBoss(Player player) {
+            Area playerArea = new Area(player.getShape());
+            playerArea.intersect(boss.getShape());
+            // tìm giao nhau giữa hai khu vực hiển thị player và boss
+            if (!playerArea.isEmpty()) {
+                // có va chạm
+                if(!boss.updateHP(player.getHP())){
+                    // nếu hp của boss ít hơn hp plyer
+                    bossActive = false;
+                    // chuyển trạng thái của boss => false
+                    sound.soundDestroy();
+                    // thêm âm thanh
+                    double x = boss.getX() + Rocket.ROCKET_SITE / 2;
+                    double y = boss.getY() + Rocket.ROCKET_SITE / 2;
+                    // tính toạ độ trung tâm của tên lửa để đặt hiệu ứng nổ tại đó
+
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.05f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.1f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 10, 10, 100, 0.3f, new Color(230, 207, 105)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 100, 0.5f, new Color(255, 70, 70)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 150, 0.2f, new Color(255, 255, 255)));
+                    // Thêm một loạt các hiệu ứng nổ với kích thước, màu sắc và độ trong suốt khác nhau tại vị trí trung tâm của tên lửa, tạo ra hiệu ứng nổ đa dạng
+
+
+                }
+                if (!player.updateHP(boss.getHP())) {
+                    // cập nhật hp player ít hơn hp của boss
+                    player.setAlive(false);
+                    // nếu hết HP, trạng thái sống của player trả về false
+                    sound.soundDestroy();
+                    // thêm âm thanh phá huỷ
+
+                    double x = player.getX() + Player.PLAYER_SITE / 2;
+                    double y = player.getY() + Player.PLAYER_SITE / 2;
+                    // tính toạ độ trung tâm player để đặt vị trí nổ
+
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.05f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.1f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 10, 10, 100, 0.3f, new Color(230, 207, 105)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 100, 0.5f, new Color(255, 70, 70)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 150, 0.2f, new Color(255, 255, 255)));
+                    // Tạo thêm nhiều hiệu ứng nổ đa dạng về kích thước, độ trong suốt, và màu sắc
+                }
+            }
+
+    }
 
     private void checkBullets(Bullet bullet) {
         for(int i = 0; i < rockets.size(); i++) {
@@ -359,6 +535,79 @@ public class PanelGame extends JComponent {
                     bullets.remove(bullet);
                     // xoá bỏ đạn khỏi danh sách sau khi nó va chạm
                 }
+            }
+        }
+        //Boss boss = new Boss();
+        if(boss != null) { // kiểm tra boss có tồn tại không?
+            Area area2 = new Area(bullet.getShape());
+            // gọi area từ hình dạng viên đạn
+            area2.intersect(boss.getShape());
+            // tìm giao nhau giữa shape của boss và viên đạn
+            if (!area2.isEmpty()) {
+                // khu vực giao nhau không trống => có va chạm
+                boomEffects.add(new Effect(bullet.getCenterX(), bullet.getCenterY(), 3, 5, 60, 0.5f, new Color(230, 207, 105)));
+                // khi có va chạm, thêm effect vào boomEffect
+                if (!boss.updateHP(bullet.getSize())) {
+                    // Gọi updateHP() trên boss để giảm HP của boss dựa trên kích thước viên đạn
+                    bossActive = false;
+                    sound.soundDestroy();
+                    // thêm âm thanh phá huỷ
+
+                    double x = boss.getX() + Boss.BOSS_SITE / 2;
+                    double y = boss.getY() + Boss.BOSS_SITE / 2;
+                    // tính toạ độ trung tâm của tên lửa để đặt hiệu ứng nổ tại đó
+
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.05f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.1f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 10, 10, 100, 0.3f, new Color(230, 207, 105)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 100, 0.5f, new Color(255, 70, 70)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 150, 0.2f, new Color(255, 255, 255)));
+                    // Thêm một loạt các hiệu ứng nổ với kích thước, màu sắc và độ trong suốt khác nhau tại vị trí trung tâm của tên lửa, tạo ra hiệu ứng nổ đa dạng
+
+                } else {
+                    sound.soundHit();
+                    // thêm âm thanh va chạm nếu rocket chưa bị phá huỷ
+                }
+                bullets.remove(bullet);
+                // xoá bỏ đạn khỏi danh sách sau khi nó va chạm
+            }
+        }
+
+    }
+    private void checkBossBullet(BossBullet bossBullet) {
+        //Player player = new Player();
+        if(player.isAlive()) { // kiểm tra player có tồn tại không?
+            Area area = new Area(bossBullet.getShape());
+            // gọi area từ hình dạng viên đạn
+            area.intersect(player.getShape());
+            // tìm giao nhau giữa shape của player và viên đạn
+            if (!area.isEmpty()) {
+                // khu vực giao nhau không trống => có va chạm
+                boomEffects.add(new Effect(bossBullet.getCenterX(), bossBullet.getCenterY(), 3, 5, 60, 0.5f, new Color(230, 207, 105)));
+                // khi có va chạm, thêm effect vào boomEffect
+                if (!player.updateHP(bossBullet.getSize())) {
+                    // Gọi updateHP() trên player để giảm HP của player dựa trên kích thước viên đạn
+                    player.setAlive(false);
+                    sound.soundDestroy();
+                    // thêm âm thanh phá huỷ
+
+                    double x = player.getX() + player.PLAYER_SITE / 2;
+                    double y = player.getY() + player.PLAYER_SITE / 2;
+                    // tính toạ độ trung tâm của player để đặt hiệu ứng nổ tại đó
+
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.05f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 5, 5, 75, 0.1f, new Color(32, 178, 169)));
+                    boomEffects.add(new Effect(x, y, 10, 10, 100, 0.3f, new Color(230, 207, 105)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 100, 0.5f, new Color(255, 70, 70)));
+                    boomEffects.add(new Effect(x, y, 10, 5, 150, 0.2f, new Color(255, 255, 255)));
+                    // Thêm một loạt các hiệu ứng nổ với kích thước, màu sắc và độ trong suốt khác nhau tại vị trí trung tâm của tên lửa, tạo ra hiệu ứng nổ đa dạng
+
+                } else {
+                    sound.soundHit();
+                    // thêm âm thanh va chạm nếu rocket chưa bị phá huỷ
+                }
+                bossBullets.remove(bossBullet);
+                // xoá bỏ đạn khỏi danh sách sau khi nó va chạm
             }
         }
     }
@@ -427,9 +676,15 @@ public class PanelGame extends JComponent {
                 bullet.draw(g2);
             }
         }
+        for(int i = 0; i < bossBullets.size(); i++) {
+            BossBullet bossBullet = bossBullets.get(i);
+            if(bossBullet != null) {
+                bossBullet.draw(g2);
+            }
+        }
         for(int i = 0; i < rockets.size(); i++) {  // HIỂN THỊ TÊN LỬA
             Rocket rocket = rockets.get(i);
-            if(rocket != null){
+            if(rocket != null ){
                 rocket.draw(g2);
             }
         }
@@ -439,10 +694,62 @@ public class PanelGame extends JComponent {
                 boomEffect.draw(g2);
             }
         }
+        if (bossActive) {       // nếu trạng thái của boss = true, hiển thị boss
+            boss.draw(g2);
+        }
+
         g2.setColor(Color.LIGHT_GRAY);  // Màu chữ
         g2.setFont(getFont().deriveFont(Font.BOLD, 25f)); // Kích cỡ chữ Score trên screen
         g2.drawString("SCORE: " + score, 10, 25);   // VỊ TRÍ TRÊN SCREEN
+//        g2.drawString("TIME: " + dFormat.format(playTime), width - 150, 25);
 
+        if(!bossActive && score > 2) {
+            for(int i = 0; i < rockets.size(); i++){
+                Rocket rocket = rockets.get(i);
+                rockets.remove(rocket);
+                // loại có tên lửa nếu có va chạm
+                sound.soundDestroy();
+                // thêm âm thanh phá huỷ
+
+                double x1 = rocket.getX() + Rocket.ROCKET_SITE / 2;
+                double y1 = rocket.getY() + Rocket.ROCKET_SITE / 2;
+                // tính toạ độ trung tâm tên lửa để đặt vị trí nổ
+
+                boomEffects.add(new Effect(x1, y1, 5, 5, 75, 0.05f, new Color(32, 178, 169)));
+                boomEffects.add(new Effect(x1, y1, 5, 5, 75, 0.1f, new Color(32, 178, 169)));
+                boomEffects.add(new Effect(x1, y1, 10, 10, 100, 0.3f, new Color(230, 207, 105)));
+                boomEffects.add(new Effect(x1, y1, 10, 5, 100, 0.5f, new Color(255, 70, 70)));
+                boomEffects.add(new Effect(x1, y1, 10, 5, 150, 0.2f, new Color(255, 255, 255)));
+                // Tạo thêm nhiều hiệu ứng nổ đa dạng về kích thước, độ trong suốt, và màu sắc
+
+            }
+            String win = "YOU WIN";
+            //String time = "TIME" + dFormat.format(playTime);
+            g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   //FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
+            FontMetrics fm = g2.getFontMetrics();
+            Rectangle2D r2 = fm.getStringBounds(win, g2);
+            double textWidth = r2.getWidth();
+            double textHeight = r2.getHeight();
+            // trả về rectangle2d chứ chiều cao, chiều rộng của text giúp căn giữa screen
+            double x = (width - textWidth) / 2;
+            double y = (height - textHeight) / 2;
+            g2.drawString(win, (int) x, (int) y + fm.getAscent());
+            // Tính toán vị trí x, y để căn giữa chuỗi text trên màn hình, rồi vẽ thông báo "You win" tại vị trí được xác định
+
+//            g2.setFont(getFont().deriveFont(Font.BOLD, 30f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
+//            fm = g2.getFontMetrics();   // đo kích thước của text
+//
+//            r2 = fm.getStringBounds(time, g2);
+//            textWidth = r2.getWidth();
+//            textHeight = r2.getHeight();
+//            // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+//
+//            x = (width - textWidth) / 2;
+//            y = (height - textHeight) / 2;
+//            g2.drawString(time, (int) x, (int) y + fm.getAscent() + 50);
+//            // VỊ TRÍ TRÊN SCREEN ngay dưới GAMEOVER
+
+        }
         if(!player.isAlive()) {
         // nếu người chơi chết => game over
             String text = "GAME OVER";

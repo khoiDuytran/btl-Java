@@ -9,7 +9,7 @@ import java.awt.geom.Path2D;
 public class Rocket extends HpRender {
 
     public Rocket() {
-        super(new HP(20, 20));
+        super(new HP(20, 20));  // kích thước thanh máu
         this.image = new ImageIcon(getClass().getResource("/game/image/rocket.png")).getImage();
         Path2D p =new Path2D.Double();
         p.moveTo(0,ROCKET_SITE / 2);
@@ -27,7 +27,7 @@ public class Rocket extends HpRender {
     public static final double ROCKET_SITE = 50;  // kích thước tên lửa
     private double x;
     private double y;
-    private final float speed = 0.8f;   // tốc độ di chuyển
+    private final float speed = 1f;   // tốc độ di chuyển
     private float angle = 0;   // góc tên lửa hướng tới
     private final Image image;  // lưu trữ hình ảnh tên lửa
     private final Area rocketShap;   // lưu trữ hình dạng tên lửa

@@ -52,7 +52,7 @@ public class Player extends HpRender {
     public void update() {
         x += Math.cos(Math.toRadians(angle)) * speed;
         y += Math.sin(Math.toRadians(angle)) * speed;
-        // chuyển từ độ sang radian
+        // toRadians: độ sang radian
     }
 
     // hàm cập nhật góc quay
@@ -117,7 +117,7 @@ public class Player extends HpRender {
             // đảm bảo player không vượt quá tốc độ tối đa
         }
         else {
-            speed += 0.01f;
+            speed += 0.03f;
             // tăng tốc từ từ
         }
     }
