@@ -77,9 +77,9 @@ public class Boss extends HpRender {
         // vẽ thanh máu
         g2.setTransform(oldTransform);
         // khôi phục trạng thái ban đầu
-        g2.setColor(new Color(12,173, 84));
-        g2.draw(getShape());
-        g2.draw(getShape().getBounds());
+//        g2.setColor(new Color(12,173, 84));
+//        g2.draw(getShape());
+//        g2.draw(getShape().getBounds());
     }
 
     public double getX() {

@@ -7,22 +7,7 @@ public class Key {
     private boolean key_j;
     private boolean key_k;
     private boolean key_enter;
-    private boolean key_play;
-    private boolean key_exit;
 
-
-    public boolean isKey_exit(){
-        return key_exit;
-    }
-    public void setKey_exit(boolean key_exit){
-        this.key_exit = key_exit;
-    }
-    public boolean isKey_play(){
-        return key_play;
-    }
-    public void setKey_play(boolean key_play){
-        this.key_play = key_play;
-    }
 
     public boolean isKey_enter() {
         return key_enter;
