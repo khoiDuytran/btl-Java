@@ -30,9 +30,9 @@ public class PanelGame extends JComponent {
     private boolean bossActive = false; // kiểm tra sự xuất hiện của boss
     private long bossShotTime = 0;  // thời gian lần cuối boss bắn đạn
 
-    double playTime;
-    DecimalFormat dFormat =new DecimalFormat("#0.00");
 
+//    double playTime;
+//    DecimalFormat dFormat =new DecimalFormat("#0.00");
 
     // FPS
     private final int FPS = 60;
@@ -51,6 +51,7 @@ public class PanelGame extends JComponent {
     private int score = 0;  // điểm ban đầu của người chơi
 
     public void start() {
+
         width = getWidth();
         height = getHeight();
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -63,8 +64,6 @@ public class PanelGame extends JComponent {
             // KEY_ANTIALIASING: Kích hoạt tính năng khử răng cưa để đồ họa trông mượt mà hơn.
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             // KEY_INTERPOLATION: Dùng phương pháp 'BILINEAR' để cải thiện chất lượng hiển thị hình ảnh khi chúng được phóng to hoặc thu nhỏ
-
-
         thread = new Thread(new Runnable() {   // tạo luồng mới để vòng lặp game chạy liên tục không ảnh hưởng đến cái khác
             @Override
             public void run() {
@@ -74,11 +73,11 @@ public class PanelGame extends JComponent {
                     drawGame(); // vẽ các đối tượng game
                     render();  // Cập nhật màn hình bằng cách vẽ nội dung hình ảnh (image) lên screen
                     bossUpdate();
-                    //if(player.isAlive()) playTime +=(double) 1/60;
 
+                    //if(player.isAlive()) playTime +=(double) 1/60;
                     long time = System.nanoTime() - startTime;
                     // thời gian đã trôi qua của vòng lặp hiện tại
-                    if(time < TARGET_TIME) {
+                    if (time < TARGET_TIME) {
                         long sleep = (TARGET_TIME - time) / 1000000;
                         sleep(sleep);
                     }
@@ -88,9 +87,9 @@ public class PanelGame extends JComponent {
         });
         initObjectGame();  // Khởi tạo các đối tượng trong trò chơi
         initKeyboard();    // Khởi tạo xử lý các phản hồi từ phím bấm từ người chơi
-        initBullets();     //  Khởi tạo danh sách các viên đạn để người chơi có thể bắn trong trò chơi
-        initBossBullet();   // Khởi tạo danh sách các viên đạn để boss bắn vào player
-        thread.start();    //  Bắt đầu luồng trò chơi để thực hiện vòng lặp liên tục
+        initBullets();     // Khởi tạo danh sách các viên đạn để người chơi có thể bắn trong trò chơi
+        initBossBullet();  // Khởi tạo danh sách các viên đạn để boss bắn vào player
+        thread.start();    // Bắt đầu luồng trò chơi
     }
 
     // thêm Rockets vào trò chơi
@@ -122,19 +121,19 @@ public class PanelGame extends JComponent {
         // vị trí y ngẫu nhiên của tên lửa thứ hai
         Rocket rocket3 = new Rocket();
         rocket3.changeLocation(width, locationY3);
-        // Đặt vị trí ban đầu của rocket3 tại tọa độ (width, locationY3), ở cạnh phải của màn hình
-        rocket3.changeAngle(180);
-        // Đặt góc di chuyển của rocket3 là 180 độ, nó sẽ di chuyển từ phải sang trái
+        // Đặt vị trí ban đầu của rocket3 tại tọa độ (width, locationY3), ở cạnh trái của màn hình
+        rocket3.changeAngle(0);
+        // Đặt góc di chuyển của rocket3 là 180 độ, nó sẽ di chuyển từ trái sang phải
         rockets.add(rocket3);
         // nếu boss xuất hiện, thêm rocket thứ 3 vào danh sách
 
-        int locationY4 = ran.nextInt(height - 50) + 5;
+        int locationY4 = getHeight() / 2;
         // vị trí y ngẫu nhiên của tên lửa thứ 4
         Rocket rocket4 = new Rocket();
         rocket4.changeLocation(width, locationY4);
-        // Đặt vị trí ban đầu của rocket4 tại tọa độ (width, locationY4), ở cạnh trái của màn hình
-        rocket3.changeAngle(0);
-        // Đặt góc di chuyển của rocket4 là 0 độ, nó sẽ di chuyển từ trái sang phải
+        // Đặt vị trí ban đầu của rocket4 tại tọa độ (width, locationY4), ở cạnh phải của màn hình
+        rocket3.changeAngle(180);
+        // Đặt góc di chuyển của rocket4 là 0 độ, nó sẽ di chuyển từ phải sang trái
 
         if(bossActive){
             rockets.add(rocket4);
@@ -156,8 +155,15 @@ public class PanelGame extends JComponent {
                     addRocket();
                     // thêm 2 tên lửa trong danh sách 'rockets' trong trò chơi
 
-                    sleep(3000);
-                    // tạm dừng 3 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
+                    if(!bossActive){
+                        sleep(2000);
+                        // tạm dừng 2 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
+
+                    }
+                    else{
+                        sleep(800);
+                    }
+                    // tạm dừng 0.8 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
                 }
             }
         }).start();
@@ -415,7 +421,7 @@ public class PanelGame extends JComponent {
     }
 
     private void bossUpdate() {
-        if (score == 2 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
+        if (score == 20 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
             boss = new Boss();
             boss.changeLocation(getWidth() - Boss.BOSS_SITE, getHeight() / 2);  // Xuất hiện tại bên phải screen
             boss.changeAngle(180);    // thay đổi góc của boss
@@ -537,8 +543,8 @@ public class PanelGame extends JComponent {
                 }
             }
         }
-        //Boss boss = new Boss();
-        if(boss != null) { // kiểm tra boss có tồn tại không?
+
+        if(boss != null && bossActive) { // kiểm tra boss có tồn tại không?
             Area area2 = new Area(bullet.getShape());
             // gọi area từ hình dạng viên đạn
             area2.intersect(boss.getShape());
@@ -665,8 +671,17 @@ public class PanelGame extends JComponent {
         g2.setColor(new Color(30, 30, 30));  // MÀU BACKGROUND
         g2.fillRect(0, 0, width, height);
     }
+    private void drawMenu() {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, width, height); // Vẽ nền menu
+        g2.setColor(Color.WHITE);
+        g2.drawString("MENU", width / 2 - 20, height / 2 - 20); // Vẽ tiêu đề menu
+        g2.drawString("Play", width / 2 - 20, height / 2); // Nút Play
+        g2.drawString("Exit", width / 2 - 20, height / 2 + 20); // Nút Exit
+    }
 
     private void drawGame() {
+
         if(player.isAlive()){   // HIỂN THỊ MÁY BAY NGƯỜI CHƠI
             player.draw(g2);
         }
@@ -684,7 +699,7 @@ public class PanelGame extends JComponent {
         }
         for(int i = 0; i < rockets.size(); i++) {  // HIỂN THỊ TÊN LỬA
             Rocket rocket = rockets.get(i);
-            if(rocket != null ){
+            if(rocket != null){
                 rocket.draw(g2);
             }
         }
@@ -700,10 +715,8 @@ public class PanelGame extends JComponent {
 
         g2.setColor(Color.LIGHT_GRAY);  // Màu chữ
         g2.setFont(getFont().deriveFont(Font.BOLD, 25f)); // Kích cỡ chữ Score trên screen
-        g2.drawString("SCORE: " + score, 10, 25);   // VỊ TRÍ TRÊN SCREEN
 //        g2.drawString("TIME: " + dFormat.format(playTime), width - 150, 25);
-
-        if(!bossActive && score > 2) {
+        if(player.isAlive() && !bossActive && score > 20) {
             for(int i = 0; i < rockets.size(); i++){
                 Rocket rocket = rockets.get(i);
                 rockets.remove(rocket);
@@ -724,7 +737,7 @@ public class PanelGame extends JComponent {
 
             }
             String win = "YOU WIN";
-            //String time = "TIME" + dFormat.format(playTime);
+            String point = "SCORE: " + score;
             g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   //FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
             FontMetrics fm = g2.getFontMetrics();
             Rectangle2D r2 = fm.getStringBounds(win, g2);
@@ -736,18 +749,22 @@ public class PanelGame extends JComponent {
             g2.drawString(win, (int) x, (int) y + fm.getAscent());
             // Tính toán vị trí x, y để căn giữa chuỗi text trên màn hình, rồi vẽ thông báo "You win" tại vị trí được xác định
 
-//            g2.setFont(getFont().deriveFont(Font.BOLD, 30f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
-//            fm = g2.getFontMetrics();   // đo kích thước của text
-//
-//            r2 = fm.getStringBounds(time, g2);
-//            textWidth = r2.getWidth();
-//            textHeight = r2.getHeight();
-//            // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
-//
-//            x = (width - textWidth) / 2;
-//            y = (height - textHeight) / 2;
-//            g2.drawString(time, (int) x, (int) y + fm.getAscent() + 50);
-//            // VỊ TRÍ TRÊN SCREEN ngay dưới GAMEOVER
+            g2.setFont(getFont().deriveFont(Font.BOLD, 30f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
+            fm = g2.getFontMetrics();   // đo kích thước của text
+
+            r2 = fm.getStringBounds(point, g2);
+            textWidth = r2.getWidth();
+            textHeight = r2.getHeight();
+            // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+
+            x = (width - textWidth) / 2;
+            y = (height - textHeight) / 2;
+            g2.drawString(point, (int) x, (int) y + fm.getAscent() + 50);
+            // VỊ TRÍ TRÊN SCREEN ngay dưới you win
+
+        }
+        else {
+            g2.drawString("SCORE: " + score, 10, 25);   // VỊ TRÍ TRÊN SCREEN
 
         }
         if(!player.isAlive()) {

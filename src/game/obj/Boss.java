@@ -5,11 +5,12 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 
 public class Boss extends HpRender {
 
     public Boss() {
-        super(new HP(150, 150));
+        super(new HP(500, 500));
         // kích thước thanh máu tối đa
         this.image = new ImageIcon(getClass().getResource("/game/image/boss.png")).getImage();
         Path2D p = new Path2D.Double();
@@ -20,8 +21,12 @@ public class Boss extends HpRender {
         p.lineTo(30, BOSS_SITE - 20);
         // vẽ các cạnh của tên lửa bằng cách xác định các tọa độ tại những điểm khác nhau
 
-        bossShap = new Area(p);
-        // khu vực hiển thị của boss
+        // Lấy kích thước của hình ảnh
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+
+        // Cập nhật bossShape để khớp với hình ảnh
+        bossShap = new Area(new Rectangle2D.Double(0, 20, imageWidth , imageHeight));
 
     }
 
@@ -72,6 +77,9 @@ public class Boss extends HpRender {
         // vẽ thanh máu
         g2.setTransform(oldTransform);
         // khôi phục trạng thái ban đầu
+        g2.setColor(new Color(12,173, 84));
+        g2.draw(getShape());
+        g2.draw(getShape().getBounds());
     }
 
     public double getX() {
@@ -90,7 +98,7 @@ public class Boss extends HpRender {
         AffineTransform afx = new AffineTransform();
         afx.translate(x, y);
         // chuyển tới toạ độ x, y
-        afx.rotate(Math.toRadians(angle), BOSS_SITE / 2, BOSS_SITE / 2);
+        //afx.rotate(Math.toRadians(angle), BOSS_SITE / 2, BOSS_SITE / 2);
         // xoay quanh trung tâm hình
         return new Area(afx.createTransformedShape(bossShap));
         // Trả về một đối tượng Area mới từ hình đã được biến đổi
