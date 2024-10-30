@@ -33,6 +33,7 @@ public class Boss extends HpRender {
     public static final double BOSS_SITE = 100; // kích thước
     private double x;
     private double y;
+//    private final float speed = 0.5f;
     private float angle = 0;    // góc hướng tới
     private final Image image;  // khai báo ảnh
     private final Area bossShap;    // khai báo khu vực hiển thị

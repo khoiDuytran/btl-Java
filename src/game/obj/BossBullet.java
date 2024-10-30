@@ -11,7 +11,7 @@ public class BossBullet {
     private double y;
     private final Shape shape;
     // khai bảo hình dạng
-    private final Color color = new Color(255, 255, 255);
+    private final Color color = new Color(227, 158, 158);
     // khai báo màu
     private final float angle;
     // góc bắn ra

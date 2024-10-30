@@ -140,7 +140,6 @@ public class PanelGame extends JComponent {
         }   // nếu boss xuất hiện, thêm rocket thứ 4 vào danh sách
     }
 
-
     private void initObjectGame() {
         sound = new Sound();  // tạo đối tượng âm thanh
         player = new Player(); // tạo đối tượng người chơi
@@ -419,6 +418,7 @@ public class PanelGame extends JComponent {
             }
         }).start();
     }
+    private boolean bossShootFirst = true; // hướng bắn ban đầu của boss
 
     private void bossUpdate() {
         if (score == 3 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
@@ -432,17 +432,34 @@ public class PanelGame extends JComponent {
         if (bossActive && player.isAlive()) {
             if (bossShotTime == 0) {
                 // Bắn đạn theo góc mà boss đang nhìn
+                if(bossShootFirst) {
 
-                bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() , 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 15, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 15, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 70, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 70, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 50, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 50, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() + 30, 15, 3f));
-                bossBullets.add(new BossBullet(boss.getX(),boss.getY(), boss.getAngle() - 30, 15, 3f));
-                // thêm các hướng bắn đạn của boss
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 70, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 70, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 50, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 50, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 3f));
+                    // thêm các hướng bắn đạn của boss
+                }
+                else {
+//                    Random ran = new Random();
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 8, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 8, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 60, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 60, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 3f));
+                    // thêm các hướng bắn đạn của boss
+                }
+                // Chuyển đổi hướng cho lần bắn tiếp theo
+                bossShootFirst = !bossShootFirst;
 
                 sound.soundShoot();  // Chèn âm thanh bắn
             }
