@@ -117,7 +117,7 @@ public class PanelGame extends JComponent {
         rockets.add(rocket2);
         // thêm rocket thứ 2 vào danh sách
 
-        int locationY3 = ran.nextInt(height - 50) + 10;
+        int locationY3 = getHeight() / 2 - 70;
         // vị trí y ngẫu nhiên của tên lửa thứ hai
         Rocket rocket3 = new Rocket();
         rocket3.changeLocation(width, locationY3);
@@ -127,7 +127,7 @@ public class PanelGame extends JComponent {
         rockets.add(rocket3);
         // nếu boss xuất hiện, thêm rocket thứ 3 vào danh sách
 
-        int locationY4 = getHeight() / 2;
+        int locationY4 = getHeight() / 2 - 30;
         // vị trí y ngẫu nhiên của tên lửa thứ 4
         Rocket rocket4 = new Rocket();
         rocket4.changeLocation(width, locationY4);
@@ -161,9 +161,9 @@ public class PanelGame extends JComponent {
 
                     }
                     else{
-                        sleep(800);
+                        sleep(1000);
                     }
-                    // tạm dừng 0.8 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
+                    // tạm dừng 1 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
                 }
             }
         }).start();
@@ -421,7 +421,7 @@ public class PanelGame extends JComponent {
     }
 
     private void bossUpdate() {
-        if (score == 20 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
+        if (score == 3 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
             boss = new Boss();
             boss.changeLocation(getWidth() - Boss.BOSS_SITE, getHeight() / 2);  // Xuất hiện tại bên phải screen
             boss.changeAngle(180);    // thay đổi góc của boss
@@ -671,17 +671,8 @@ public class PanelGame extends JComponent {
         g2.setColor(new Color(30, 30, 30));  // MÀU BACKGROUND
         g2.fillRect(0, 0, width, height);
     }
-    private void drawMenu() {
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, width, height); // Vẽ nền menu
-        g2.setColor(Color.WHITE);
-        g2.drawString("MENU", width / 2 - 20, height / 2 - 20); // Vẽ tiêu đề menu
-        g2.drawString("Play", width / 2 - 20, height / 2); // Nút Play
-        g2.drawString("Exit", width / 2 - 20, height / 2 + 20); // Nút Exit
-    }
 
     private void drawGame() {
-
         if(player.isAlive()){   // HIỂN THỊ MÁY BAY NGƯỜI CHƠI
             player.draw(g2);
         }
@@ -716,7 +707,7 @@ public class PanelGame extends JComponent {
         g2.setColor(Color.LIGHT_GRAY);  // Màu chữ
         g2.setFont(getFont().deriveFont(Font.BOLD, 25f)); // Kích cỡ chữ Score trên screen
 //        g2.drawString("TIME: " + dFormat.format(playTime), width - 150, 25);
-        if(player.isAlive() && !bossActive && score > 20) {
+        if(player.isAlive() && !bossActive && score > 3) {
             for(int i = 0; i < rockets.size(); i++){
                 Rocket rocket = rockets.get(i);
                 rockets.remove(rocket);
