@@ -274,7 +274,7 @@ public class PanelGame extends JComponent {
                         }
                         if(key.isKey_space()) {
                             player.speedUp();
-                            // phím space được ấn, player tăng tốc về phái trước
+                            // phím space được ấn, player tăng tốc về phia trước
                         }
                         else {
                             player.speedDown();
@@ -296,7 +296,15 @@ public class PanelGame extends JComponent {
                         // cập nhật vị trí của player theo hướng mới
                         player.changeAngle(angle);
                         // cập nhật góc xoay của player
-                    } else {
+                        if(!bossActive && score > 3){
+                            if(key.isKey_enter()){
+                                resetGame();
+                            }
+                            // trường hợp nếu như WinGame, bấm enter để chơi lại
+                        }
+                    }
+
+                    else {
                         if(key.isKey_enter()) {
                             resetGame();
                             // nếu player chết, ấn enter để bắt đầu lại
@@ -746,6 +754,8 @@ public class PanelGame extends JComponent {
             }
             String win = "YOU WIN";
             String point = "SCORE: " + score;
+            String textKey = "Enter để tiếp tục";
+
             g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   //FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
             FontMetrics fm = g2.getFontMetrics();
             Rectangle2D r2 = fm.getStringBounds(win, g2);
@@ -759,16 +769,25 @@ public class PanelGame extends JComponent {
 
             g2.setFont(getFont().deriveFont(Font.BOLD, 30f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
             fm = g2.getFontMetrics();   // đo kích thước của text
-
             r2 = fm.getStringBounds(point, g2);
             textWidth = r2.getWidth();
             textHeight = r2.getHeight();
             // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
-
             x = (width - textWidth) / 2;
             y = (height - textHeight) / 2;
-            g2.drawString(point, (int) x, (int) y + fm.getAscent() + 50);
+            g2.drawString(point, (int) x, (int) y + fm.getAscent() + 60);
             // VỊ TRÍ TRÊN SCREEN ngay dưới you win
+
+            g2.setFont(getFont().deriveFont(Font.BOLD, 20f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
+            fm = g2.getFontMetrics();   // đo kích thước của text
+            r2 = fm.getStringBounds(textKey, g2);
+            textWidth = r2.getWidth();
+            textHeight = r2.getHeight();
+            // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+            x = (width - textWidth) / 2;
+            y = (height - textHeight) / 2;
+            g2.drawString(textKey, (int) x, (int) y + fm.getAscent() + 100);
+            // VỊ TRÍ TRÊN SCREEN ngay dưới Score
 
         }
         else {
