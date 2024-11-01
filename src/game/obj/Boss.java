@@ -26,7 +26,7 @@ public class Boss extends HpRender {
         int imageHeight = image.getHeight(null);
 
         // Cập nhật bossShape để khớp với hình ảnh
-        bossShap = new Area(new Rectangle2D.Double(0, 20, imageWidth , imageHeight));
+        bossShap = new Area(new Rectangle2D.Double(10, 25, imageWidth , imageHeight - 10));
 
     }
 

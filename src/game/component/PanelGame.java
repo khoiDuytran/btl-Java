@@ -117,7 +117,7 @@ public class PanelGame extends JComponent {
         rockets.add(rocket2);
         // thêm rocket thứ 2 vào danh sách
 
-        int locationY3 = getHeight() / 2 - 70;
+        int locationY3 = getHeight() / 2 + 10;
         // vị trí y ngẫu nhiên của tên lửa thứ hai
         Rocket rocket3 = new Rocket();
         rocket3.changeLocation(width, locationY3);
@@ -127,7 +127,7 @@ public class PanelGame extends JComponent {
         rockets.add(rocket3);
         // nếu boss xuất hiện, thêm rocket thứ 3 vào danh sách
 
-        int locationY4 = getHeight() / 2 - 30;
+        int locationY4 = getHeight() / 2;
         // vị trí y ngẫu nhiên của tên lửa thứ 4
         Rocket rocket4 = new Rocket();
         rocket4.changeLocation(width, locationY4);
@@ -152,7 +152,7 @@ public class PanelGame extends JComponent {
             public void run() {
                 while(start) {
                     addRocket();
-                    // thêm 2 tên lửa trong danh sách 'rockets' trong trò chơi
+                    // thêm tên lửa trong danh sách 'rockets' trong trò chơi
 
                     if(!bossActive){
                         sleep(2000);
@@ -281,26 +281,26 @@ public class PanelGame extends JComponent {
                             // ngược lại, player giảm dần tốc độ
                         }
                         player.update();
+                        // nếu player đi ra ngoài screen
                         if (player.getX() < 0) {
-                            player.changeLocation(width, getY());
+                            player.changeLocation(width, player.getY());
                         } else if (player.getX() > width) {
-                            player.changeLocation(0, getY());
+                            player.changeLocation(0, player.getY());
+                        }
+                        // cập nhật player xuất hiện ở phía đối diện
+                        if (player.getY() < 0) {
+                            player.changeLocation(player.getX(), height);
+                        } else if (player.getY() > height) {
+                            player.changeLocation(player.getX(), 0);
                         }
 
-                        // Kiểm tra chiều dọc
-                        if (player.getY() < 0) {
-                            player.changeLocation(getX(), height);
-                        } else if (player.getY() > height) {
-                            player.changeLocation(getX(), 0);
-                        }
-                        // cập nhật vị trí của player theo hướng mới
                         player.changeAngle(angle);
                         // cập nhật góc xoay của player
                         if(!bossActive && score > 3){
                             if(key.isKey_enter()){
                                 resetGame();
                             }
-                            // trường hợp nếu như WinGame, bấm enter để chơi lại
+                            // trường hợp WinGame, bấm enter để chơi lại
                         }
                     }
 
@@ -442,28 +442,28 @@ public class PanelGame extends JComponent {
                 // Bắn đạn theo góc mà boss đang nhìn
                 if(bossShootFirst) {
 
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 70, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 70, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 50, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 50, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 70, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 70, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 50, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 50, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 2f));
                     // thêm các hướng bắn đạn của boss
                 }
                 else {
 //                    Random ran = new Random();
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 8, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 8, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 60, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 60, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 3f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 3f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 8, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 8, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 65, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 65, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 45, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 45, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 23, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 23, 15, 2f));
                     // thêm các hướng bắn đạn của boss
                 }
                 // Chuyển đổi hướng cho lần bắn tiếp theo
