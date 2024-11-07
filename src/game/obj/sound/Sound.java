@@ -15,7 +15,7 @@ public class Sound {
         this.shoot = this.getClass().getResource("/game/obj/sound/shoot.wav");
         this.hit = this.getClass().getResource("/game/obj/sound/hit.wav");
         this.destroy = this.getClass().getResource("/game/obj/sound/destroy.wav");
-        // lấy đường dẫn tới các tệp âm thanh và gán đường dẫn cho các giá trị shoot, hit, destroy
+        // lấy đường dẫn tới các tệp âm thanh và gán đường dẫn cho các giá trị sound
     }
 
     public void soundShoot() {

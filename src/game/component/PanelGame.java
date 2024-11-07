@@ -117,25 +117,15 @@ public class PanelGame extends JComponent {
         rockets.add(rocket2);
         // thêm rocket thứ 2 vào danh sách
 
-        int locationY3 = getHeight() / 2 + 10;
-        // vị trí y ngẫu nhiên của tên lửa thứ hai
-        Rocket rocket3 = new Rocket();
-        rocket3.changeLocation(width, locationY3);
-        // Đặt vị trí ban đầu của rocket3 tại tọa độ (width, locationY3), ở cạnh trái của màn hình
-        rocket3.changeAngle(0);
-        // Đặt góc di chuyển của rocket3 là 180 độ, nó sẽ di chuyển từ trái sang phải
-        rockets.add(rocket3);
-        // nếu boss xuất hiện, thêm rocket thứ 3 vào danh sách
-
         int locationY4 = getHeight() / 2;
         // vị trí y ngẫu nhiên của tên lửa thứ 4
         Rocket rocket4 = new Rocket();
         rocket4.changeLocation(width, locationY4);
         // Đặt vị trí ban đầu của rocket4 tại tọa độ (width, locationY4), ở cạnh phải của màn hình
-        rocket3.changeAngle(180);
+        rocket4.changeAngle(180);
         // Đặt góc di chuyển của rocket4 là 0 độ, nó sẽ di chuyển từ phải sang trái
 
-        if(bossActive){
+        if(score >= 5){
             rockets.add(rocket4);
         }   // nếu boss xuất hiện, thêm rocket thứ 4 vào danh sách
     }
@@ -143,8 +133,7 @@ public class PanelGame extends JComponent {
     private void initObjectGame() {
         sound = new Sound();  // tạo đối tượng âm thanh
         player = new Player(); // tạo đối tượng người chơi
-        player.changeLocation(150, 150);
-        // đặt vị trí ban đầu của người chơi ở toạ độ (150, 150)
+        player.changeLocation(150, 150);    // đặt vị trí ban đầu của người chơi ở toạ độ (150, 150)
         rockets = new ArrayList<>();    // danh sách các tên lửa
         boomEffects = new ArrayList<>();    // danh sách các hiệu ứng nổ
         new Thread(new Runnable() {
@@ -155,8 +144,8 @@ public class PanelGame extends JComponent {
                     // thêm tên lửa trong danh sách 'rockets' trong trò chơi
 
                     if(!bossActive){
-                        sleep(2000);
-                        // tạm dừng 2 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
+                        sleep(2500);
+                        // tạm dừng 2.5 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
 
                     }
                     else{
@@ -255,17 +244,22 @@ public class PanelGame extends JComponent {
                                 if(key.isKey_j()) {
                                     bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 5, 3f));
                                     // thêm đạn với kích cỡ là 5
+                                    sound.soundShoot(); // thêm âm thanh bắn đạn
+
                                 }
                                 else {
-                                    bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 15, 3f));
-                                    // thêm đạn với kích cỡ là 20
+                                    if(bossActive) {
+                                        bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 15, 3f));
+                                        // thêm đạn với kích cỡ là 20
+                                        sound.soundShoot(); // thêm âm thanh bắn đạn
+
+                                    }
                                 }
-                                sound.soundShoot(); // thêm âm thanh bắn đạn
                             }
                             shotTime++;     // tăng shottime để trì hoãn giữa các lần bắn
                             if(shotTime == 15) {
                                 shotTime = 0;
-                                // khi shottime = 15, trả shottime lại về 0
+                                // khi shottime = 30, trả shottime lại về 0
                             }
                         }
                         else {
@@ -296,14 +290,13 @@ public class PanelGame extends JComponent {
 
                         player.changeAngle(angle);
                         // cập nhật góc xoay của player
-                        if(!bossActive && score > 3){
+                        if(!bossActive && score > 5){
                             if(key.isKey_enter()){
                                 resetGame();
                             }
                             // trường hợp WinGame, bấm enter để chơi lại
                         }
                     }
-
                     else {
                         if(key.isKey_enter()) {
                             resetGame();
@@ -311,7 +304,7 @@ public class PanelGame extends JComponent {
                         }
 
                     }
-                    for(int i = 0; i < rockets.size(); i++){
+                     for(int i = 0; i < rockets.size(); i++){
                         // duyệt qua danh sách tên lửa
                         Rocket rocket = rockets.get(i);
                         if(rocket != null){
@@ -429,7 +422,7 @@ public class PanelGame extends JComponent {
     private boolean bossShootFirst = true; // hướng bắn ban đầu của boss
 
     private void bossUpdate() {
-        if (score == 3 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
+        if (score == 5 && !bossActive ) {   // nếu điểm = 20 và boss chưa được kích hoạt
             boss = new Boss();
             boss.changeLocation(getWidth() - Boss.BOSS_SITE, getHeight() / 2);  // Xuất hiện tại bên phải screen
             boss.changeAngle(180);    // thay đổi góc của boss
@@ -455,9 +448,9 @@ public class PanelGame extends JComponent {
                 }
                 else {
 //                    Random ran = new Random();
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 8, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 8, 15, 2f));
+                    //bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 7, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 7, 15, 2f));
                     bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 65, 15, 2f));
                     bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 65, 15, 2f));
                     bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 45, 15, 2f));
@@ -732,7 +725,7 @@ public class PanelGame extends JComponent {
         g2.setColor(Color.LIGHT_GRAY);  // Màu chữ
         g2.setFont(getFont().deriveFont(Font.BOLD, 25f)); // Kích cỡ chữ Score trên screen
 //        g2.drawString("TIME: " + dFormat.format(playTime), width - 150, 25);
-        if(player.isAlive() && !bossActive && score > 3) {
+        if(player.isAlive() && !bossActive && score > 5) {
             for(int i = 0; i < rockets.size(); i++){
                 Rocket rocket = rockets.get(i);
                 rockets.remove(rocket);

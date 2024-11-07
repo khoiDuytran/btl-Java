@@ -7,8 +7,14 @@ public class Key {
     private boolean key_j;
     private boolean key_k;
     private boolean key_enter;
+    private boolean key_s;
 
-
+    public boolean isKey_s(){
+        return key_s;
+    }
+    public void setKey_s(boolean key_s){
+        this.key_s = key_s;
+    }
     public boolean isKey_enter() {
         return key_enter;
     }

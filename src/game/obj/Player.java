@@ -117,7 +117,7 @@ public class Player extends HpRender {
             // đảm bảo player không vượt quá tốc độ tối đa
         }
         else {
-            speed += 0.03f;
+            speed += 0.05f;
             // tăng tốc từ từ
         }
     }
@@ -130,7 +130,7 @@ public class Player extends HpRender {
             // đảm bảo player dừng hẳn
         }
         else {
-            speed -= 0.007f;
+            speed -= 0.01f;
             // giảm tốc từ từ
         }
     }

@@ -21,7 +21,7 @@ public class Boss extends HpRender {
         p.lineTo(30, BOSS_SITE - 20);
         // vẽ các cạnh của tên lửa bằng cách xác định các tọa độ tại những điểm khác nhau
 
-        // Lấy kích thước của hình ảnh
+        // Lấy kích thước của hình ảnhddldkk kd dk  ddkdk kd kkd
         int imageWidth = image.getWidth(null);
         int imageHeight = image.getHeight(null);
 
@@ -33,7 +33,6 @@ public class Boss extends HpRender {
     public static final double BOSS_SITE = 100; // kích thước
     private double x;
     private double y;
-//    private final float speed = 0.5f;
     private float angle = 0;    // góc hướng tới
     private final Image image;  // khai báo ảnh
     private final Area bossShap;    // khai báo khu vực hiển thị
@@ -56,7 +55,6 @@ public class Boss extends HpRender {
     public void changeAngle(float angle) {
         if (angle < 0) {
             angle = 359;
-
         } else if (angle > 359) {
             angle = 0;
         }
