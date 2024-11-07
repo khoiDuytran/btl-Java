@@ -25,6 +25,7 @@ public class PanelGame extends JComponent {
 
     private Thread thread;   // luồng chính chạy vòng lặp game
     private boolean start = true;
+    private boolean isRunning = false;
     private Key key; // khai báo đối tượng key xử lý các phím
     private int shotTime;  // thời gian giữa những lần bắn của player
     private boolean bossActive = false; // kiểm tra sự xuất hiện của boss
@@ -68,20 +69,37 @@ public class PanelGame extends JComponent {
             @Override
             public void run() {
                 while (start) {
-                    long startTime = System.nanoTime();  // thời gian bắt đầu
-                    drawBackground();   // vẽ nền game
-                    drawGame(); // vẽ các đối tượng game
-                    render();  // Cập nhật màn hình bằng cách vẽ nội dung hình ảnh (image) lên screen
-                    bossUpdate();
-
-                    //if(player.isAlive()) playTime +=(double) 1/60;
-                    long time = System.nanoTime() - startTime;
-                    // thời gian đã trôi qua của vòng lặp hiện tại
-                    if (time < TARGET_TIME) {
-                        long sleep = (TARGET_TIME - time) / 1000000;
-                        sleep(sleep);
+                    if (key.isKey_s()) {
+                        isRunning = true; // Chuyển đổi trạng thái chạy game
                     }
-                    // Nếu vòng lặp chạy nhanh hơn 'TARGET_TIME', thì chương trình sẽ ngắt (sleep) một khoảng thời gian để giữ cho FPS luôn ổn định
+                    if (key.isKey_esc()) {
+                        System.exit(0); // Thoát game nếu người dùng nhấn ESC
+                    }
+
+                    if (isRunning) {
+                        long startTime = System.nanoTime();  // thời gian bắt đầu
+                        drawBackground();   // vẽ nền game
+                        drawGame(); // vẽ các đối tượng game
+                        render();  // Cập nhật màn hình bằng cách vẽ nội dung hình ảnh (image) lên screen
+                        bossUpdate();
+                        //if(player.isAlive()) playTime +=(double) 1/60;
+                        // Đo thời gian đã trôi qua của vòng lặp hiện tại
+                        long time = System.nanoTime() - startTime;
+                        if (time < TARGET_TIME) {
+                            try {
+                                long sleep = (TARGET_TIME - time) / 1000000;
+                                if (sleep > 0) {
+                                    Thread.sleep(sleep);  // Sleep để giữ cho FPS ổn định
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        // Nếu vòng lặp chạy nhanh hơn 'TARGET_TIME', chương trình sẽ ngắt (sleep) để giữ FPS ổn định
+                    } else {
+                        drawStart();
+                        render();
+                    }
                 }
             }
         });
@@ -140,9 +158,10 @@ public class PanelGame extends JComponent {
             @Override
             public void run() {
                 while(start) {
-                    addRocket();
-                    // thêm tên lửa trong danh sách 'rockets' trong trò chơi
-
+                    if(isRunning){
+                        addRocket();
+                        // thêm tên lửa trong danh sách 'rockets' trong trò chơi
+                    }
                     if(!bossActive){
                         sleep(2500);
                         // tạm dừng 2.5 giây trước khi thêm 2 tên lửa mới để tạo sự đều đặn trong game
@@ -194,6 +213,12 @@ public class PanelGame extends JComponent {
                 else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     key.setKey_enter(true);
                 }
+                else if(e.getKeyCode() == KeyEvent.VK_S) {
+                    key.setKey_s(true);
+                }
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    key.setKey_esc(true);
+                }
             }
 
             @Override
@@ -219,6 +244,12 @@ public class PanelGame extends JComponent {
                 else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
                     key.setKey_enter(false);
                 }
+                else if(e.getKeyCode() == KeyEvent.VK_S) {
+                    key.setKey_s(false);
+                }
+                else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    key.setKey_esc(false);
+                }
             }
         });
         new Thread(new Runnable() {
@@ -227,7 +258,7 @@ public class PanelGame extends JComponent {
                 float s = 0.5f;
                 // biến tốc độ góc, dùng để điều chỉnh góc xoay của người chơi khi nhấn các phím điều hướng
                 while (start) {
-                    if(player.isAlive()) {
+                    if(player.isAlive() && isRunning) {
                         float angle = player.getAngle();
                         // Lấy góc hiện tại của người chơi để sử dụng và cập nhật
                         if(key.isKey_left()) {
@@ -689,8 +720,44 @@ public class PanelGame extends JComponent {
         g2.setColor(new Color(30, 30, 30));  // MÀU BACKGROUND
         g2.fillRect(0, 0, width, height);
     }
+    private void drawStart() {
+        ImageIcon background = new ImageIcon(getClass().getResource("/game/image/background.png"));
+        Image image3 = background.getImage();
+        double x = 0;
+        double y = 0;
+        g2.drawImage(image3, (int) x, (int) y, null);
+
+        ImageIcon start = new ImageIcon(getClass().getResource("/game/image/start_button.png"));
+        Image image1 = start.getImage();
+
+        double imageWidth = image1.getWidth(null);
+        double imageHeight = image1.getHeight(null);
+        x = (width - imageWidth) / 2;
+        y = (height - imageHeight) / 2;
+        g2.drawImage(image1, (int) x, (int) y, null);
+
+        ImageIcon exit = new ImageIcon(getClass().getResource("/game/image/exit_button.png"));
+        Image image2 = exit.getImage();
+
+        imageWidth = image2.getWidth(null);
+        imageHeight = image2.getHeight(null);
+        x = (width - imageWidth) / 2;
+        y = (height - imageHeight) / 2;
+        g2.drawImage(image2, (int) x, (int) y + 100, null);
+
+        String game = "BATTLESHIP";
+        g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
+        FontMetrics fm = g2.getFontMetrics();   // đo kích thước của text
+        Rectangle2D r2 = fm.getStringBounds(game, g2);
+        double textWidth = r2.getWidth();
+        double textHeight = r2.getHeight();
+        // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+        x = (width - textWidth) / 2;
+        g2.drawString(game, (int) x, 100);
+    }
 
     private void drawGame() {
+
         if(player.isAlive()){   // HIỂN THỊ MÁY BAY NGƯỜI CHƠI
             player.draw(g2);
         }
@@ -745,6 +812,7 @@ public class PanelGame extends JComponent {
                 // Tạo thêm nhiều hiệu ứng nổ đa dạng về kích thước, độ trong suốt, và màu sắc
 
             }
+
             String win = "YOU WIN";
             String point = "SCORE: " + score;
             String textKey = "Enter để tiếp tục";

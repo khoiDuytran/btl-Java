@@ -8,12 +8,20 @@ public class Key {
     private boolean key_k;
     private boolean key_enter;
     private boolean key_s;
+    private boolean key_esc;
 
     public boolean isKey_s(){
         return key_s;
     }
     public void setKey_s(boolean key_s){
         this.key_s = key_s;
+    }
+
+    public boolean isKey_esc() {
+        return key_esc;
+    }
+    public void setKey_esc(boolean key_esc) {
+        this.key_esc = key_esc;
     }
     public boolean isKey_enter() {
         return key_enter;
