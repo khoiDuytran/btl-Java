@@ -9,7 +9,7 @@ import java.awt.geom.Path2D;
 public class Player extends HpRender {
 
     public Player() {
-        super(new HP(50, 50));
+        super(new HP(90, 90));
         this.image = new ImageIcon(getClass().getResource("/game/image/plane.png")).getImage();
         this.image_speed = new ImageIcon(getClass().getResource("/game/image/plane_speed.png")).getImage();
         Path2D p = new Path2D.Double();

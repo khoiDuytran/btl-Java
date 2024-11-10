@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -70,7 +69,7 @@ public class PanelGame extends JComponent {
             public void run() {
                 while (start) {
                     if (key.isKey_s()) {
-                        isRunning = true; // Chuyển đổi trạng thái chạy game
+                        isRunning = true;
                     }
                     if (key.isKey_esc()) {
                         System.exit(0); // Thoát game nếu người dùng nhấn ESC
@@ -97,8 +96,9 @@ public class PanelGame extends JComponent {
                         }
                         // Nếu vòng lặp chạy nhanh hơn 'TARGET_TIME', chương trình sẽ ngắt (sleep) để giữ FPS ổn định
                     } else {
-                        drawStart();
+                        drawMenu();
                         render();
+                        // vẽ màn hình menu
                     }
                 }
             }
@@ -273,14 +273,14 @@ public class PanelGame extends JComponent {
                             if(shotTime == 0){
                             // nêu shotTime = 0 thì tạo đạn mới
                                 if(key.isKey_j()) {
-                                    bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 5, 3f));
+                                    bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 8, 3f));
                                     // thêm đạn với kích cỡ là 5
                                     sound.soundShoot(); // thêm âm thanh bắn đạn
 
                                 }
                                 else {
                                     if(bossActive) {
-                                        bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 15, 3f));
+                                        bullets.add(0, new Bullet(player.getX(), player.getY(), player.getAngle(), 18, 3f));
                                         // thêm đạn với kích cỡ là 20
                                         sound.soundShoot(); // thêm âm thanh bắn đạn
 
@@ -466,28 +466,26 @@ public class PanelGame extends JComponent {
                 // Bắn đạn theo góc mà boss đang nhìn
                 if(bossShootFirst) {
 
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 70, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 70, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 50, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 50, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 15, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 15, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 70, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 70, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 50, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 50, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 30, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 30, 15, 1.5f));
                     // thêm các hướng bắn đạn của boss
                 }
                 else {
-//                    Random ran = new Random();
-                    //bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle(), 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 7, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 7, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 65, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 65, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 45, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 45, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 23, 15, 2f));
-                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 23, 15, 2f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 7, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 7, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 65, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 65, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 45, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 45, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() + 23, 15, 1.5f));
+                    bossBullets.add(new BossBullet(boss.getX(), boss.getY(), boss.getAngle() - 23, 15, 1.5f));
                     // thêm các hướng bắn đạn của boss
                 }
                 // Chuyển đổi hướng cho lần bắn tiếp theo
@@ -497,7 +495,7 @@ public class PanelGame extends JComponent {
             }
 
             bossShotTime++;
-            if (bossShotTime >= 30) {  // Đặt tần suất bắn
+            if (bossShotTime >= 45) {  // Đặt tần suất bắn
                 bossShotTime = 0;
             }
             checkBoss(player);  // Kiểm tra va chạm với người chơi
@@ -720,37 +718,61 @@ public class PanelGame extends JComponent {
         g2.setColor(new Color(30, 30, 30));  // MÀU BACKGROUND
         g2.fillRect(0, 0, width, height);
     }
-    private void drawStart() {
+    private void drawMenu() {
         ImageIcon background = new ImageIcon(getClass().getResource("/game/image/background.png"));
         Image image3 = background.getImage();
         double x = 0;
         double y = 0;
         g2.drawImage(image3, (int) x, (int) y, null);
 
-        ImageIcon start = new ImageIcon(getClass().getResource("/game/image/start_button.png"));
-        Image image1 = start.getImage();
+//        ImageIcon start = new ImageIcon(getClass().getResource("/game/image/start_button.png"));
+//        Image image1 = start.getImage();
+//
+//        double imageWidth = image1.getWidth(null);
+//        double imageHeight = image1.getHeight(null);
+//        x = (width - imageWidth) / 2;
+//        y = (height - imageHeight) / 2;
+//        g2.drawImage(image1, (int) x, (int) y, null);
+//
+//        ImageIcon exit = new ImageIcon(getClass().getResource("/game/image/exit_button.png"));
+//        Image image2 = exit.getImage();
+//
+//        imageWidth = image2.getWidth(null);
+//        imageHeight = image2.getHeight(null);
+//        x = (width - imageWidth) / 2;
+//        y = (height - imageHeight) / 2;
+//        g2.drawImage(image2, (int) x, (int) y + 100, null);
 
-        double imageWidth = image1.getWidth(null);
-        double imageHeight = image1.getHeight(null);
-        x = (width - imageWidth) / 2;
-        y = (height - imageHeight) / 2;
-        g2.drawImage(image1, (int) x, (int) y, null);
+        String start = "Bấm 's' để bắt đầu chơi";
+        g2.setFont(getFont().deriveFont(Font.BOLD, 40f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
+        g2.setColor(new Color(69, 229, 30));
+        FontMetrics fm = g2.getFontMetrics();   // đo kích thước của text
+        Rectangle2D r2 = fm.getStringBounds(start, g2);
+        double textWidth = r2.getWidth();
+        double textHeight = r2.getHeight();
+        // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+        x = (width - textWidth) / 2;
+        y = (height - textHeight) /2;
+        g2.drawString(start, (int) x, (int) y + fm.getAscent() + 180);
 
-        ImageIcon exit = new ImageIcon(getClass().getResource("/game/image/exit_button.png"));
-        Image image2 = exit.getImage();
-
-        imageWidth = image2.getWidth(null);
-        imageHeight = image2.getHeight(null);
-        x = (width - imageWidth) / 2;
-        y = (height - imageHeight) / 2;
-        g2.drawImage(image2, (int) x, (int) y + 100, null);
+        String esc = "Bấm 'esc' để thoát";
+        g2.setFont(getFont().deriveFont(Font.BOLD, 40f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
+        g2.setColor(new Color(222, 26, 26));
+        fm = g2.getFontMetrics();   // đo kích thước của text
+        r2 = fm.getStringBounds(esc, g2);
+        textWidth = r2.getWidth();
+        textHeight = r2.getHeight();
+        // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+        x = (width - textWidth) / 2;
+        y =(height - textHeight) / 2;
+        g2.drawString(esc, (int) x, (int) y + fm.getAscent() + 250);
 
         String game = "BATTLESHIP";
         g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
-        FontMetrics fm = g2.getFontMetrics();   // đo kích thước của text
-        Rectangle2D r2 = fm.getStringBounds(game, g2);
-        double textWidth = r2.getWidth();
-        double textHeight = r2.getHeight();
+        g2.setColor(Color.WHITE);
+        fm = g2.getFontMetrics();   // đo kích thước của text
+        r2 = fm.getStringBounds(game, g2);
+        textWidth = r2.getWidth();
         // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
         x = (width - textWidth) / 2;
         g2.drawString(game, (int) x, 100);
@@ -789,8 +811,6 @@ public class PanelGame extends JComponent {
             boss.draw(g2);
         }
 
-        g2.setColor(Color.LIGHT_GRAY);  // Màu chữ
-        g2.setFont(getFont().deriveFont(Font.BOLD, 25f)); // Kích cỡ chữ Score trên screen
 //        g2.drawString("TIME: " + dFormat.format(playTime), width - 150, 25);
         if(player.isAlive() && !bossActive && score > 5) {
             for(int i = 0; i < rockets.size(); i++){
@@ -812,11 +832,15 @@ public class PanelGame extends JComponent {
                 // Tạo thêm nhiều hiệu ứng nổ đa dạng về kích thước, độ trong suốt, và màu sắc
 
             }
-
+//            g2.setColor(new Color(62, 59, 59));
+//            g2.fillRect(350, 200, 450, 450);
+            
             String win = "YOU WIN";
             String point = "SCORE: " + score;
             String textKey = "Enter để tiếp tục";
+            String esc = "Esc để thoát";
 
+            g2.setColor(Color.WHITE);
             g2.setFont(getFont().deriveFont(Font.BOLD, 50f));   //FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 50
             FontMetrics fm = g2.getFontMetrics();
             Rectangle2D r2 = fm.getStringBounds(win, g2);
@@ -850,40 +874,75 @@ public class PanelGame extends JComponent {
             g2.drawString(textKey, (int) x, (int) y + fm.getAscent() + 100);
             // VỊ TRÍ TRÊN SCREEN ngay dưới Score
 
-        }
-        else {
-            g2.drawString("SCORE: " + score, 10, 25);   // VỊ TRÍ TRÊN SCREEN
+            g2.setFont(getFont().deriveFont(Font.BOLD, 20f));
+            fm = g2.getFontMetrics();
+            r2 = fm.getStringBounds(esc, g2);
+            textWidth = r2.getWidth();
+            textHeight = r2.getHeight();
+            x = (width - textWidth) / 2;
+            y = (height - textHeight) / 2;
+            g2.drawString(esc, (int) x, (int) y + fm.getAscent() + 130);
 
         }
-        if(!player.isAlive()) {
+        else if(!player.isAlive()) {
         // nếu người chơi chết => game over
+
+//            g2.setColor(new Color(62, 59, 59));
+//            g2.fillRect(350, 200, 450, 450);
+
             String text = "GAME OVER";
+            String point = "SCORE: " + score;
             String textKey = "Enter để tiếp tục";
+            String esc = "Esc để thoát";
+
+            g2.setColor(Color.WHITE);
             g2.setFont(getFont().deriveFont(Font.BOLD, 50f));  // FONT CHỮ ĐẬM VÀ KÍCH CỠ 50 TRÊN SCREEN
             FontMetrics fm = g2.getFontMetrics();   // ĐO KÍCH THƯỚC CỦA STRING
-
             Rectangle2D r2 = fm.getStringBounds(text, g2);
             double textWidth = r2.getWidth();
             double textHeight = r2.getHeight();
             // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
-
             double x = (width - textWidth) / 2;
             double y = (height - textHeight) / 2;
             g2.drawString(text, (int) x, (int) y + fm.getAscent());
             // Tính toán vị trí x, y để căn giữa chuỗi text trên màn hình, rồi vẽ thông báo "GAME OVER" tại vị trí được xác định
 
+            g2.setFont(getFont().deriveFont(Font.BOLD, 30f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
+            fm = g2.getFontMetrics();   // đo kích thước của text
+            r2 = fm.getStringBounds(point, g2);
+            textWidth = r2.getWidth();
+            textHeight = r2.getHeight();
+            // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
+            x = (width - textWidth) / 2;
+            y = (height - textHeight) / 2;
+            g2.drawString(point, (int) x, (int) y + fm.getAscent() + 60);
+            // VỊ TRÍ TRÊN SCREEN ngay dưới you win
+
             g2.setFont(getFont().deriveFont(Font.BOLD, 20f));   // FONT CHỮ ĐẬM VÀ KÍCH THƯỚC 20
             fm = g2.getFontMetrics();   // đo kích thước của text
-
             r2 = fm.getStringBounds(textKey, g2);
             textWidth = r2.getWidth();
             textHeight = r2.getHeight();
             // trả về RECTANGLE2D chứa CHIỀU CAO, CHIỀU RỘNG CỦA text giúp căn giữa SCREEN
-
             x = (width - textWidth) / 2;
             y = (height - textHeight) / 2;
-            g2.drawString(textKey, (int) x, (int) y + fm.getAscent() + 50);
+            g2.drawString(textKey, (int) x, (int) y + fm.getAscent() + 100);
             // VỊ TRÍ TRÊN SCREEN ngay dưới GAMEOVER
+
+            g2.setFont(getFont().deriveFont(Font.BOLD, 20f));
+            fm = g2.getFontMetrics();
+            r2 = fm.getStringBounds(esc, g2);
+            textWidth = r2.getWidth();
+            textHeight = r2.getHeight();
+            x = (width - textWidth) / 2;
+            y = (height - textHeight) / 2;
+            g2.drawString(esc, (int) x, (int) y + fm.getAscent() + 130);
+        }
+        else {
+            g2.setColor(Color.WHITE);
+            g2.setFont(getFont().deriveFont(Font.BOLD, 25f));
+            g2.drawString("SCORE: " + score, 10, 25);   // VỊ TRÍ TRÊN SCREEN
+
         }
     }
     private void render() {
